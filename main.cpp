@@ -77,8 +77,6 @@ void spin(int s, bool b)
 }
 int trans(int i, int j)
 {
-    i = sur_trans[i];
-    j--;
     switch (i)
     {
     case 0:
@@ -93,14 +91,28 @@ int trans(int i, int j)
     }
     return 1024;
 }
+/*int arctrans(int i, int j)
+{
+//    i = sur_trans[i];
+    for (int r = 0; r < 9; r++)
+    {
+        if (trans(i, r) == j)
+        {
+            return r;
+        }
+    }
+    return 1024;
+}*/
 bool input()
 {
+    FILE *fp;
+    fp = fopen("input.txt", "r");
     char c;
     for (int i = 0; i < 6; i++)
     {
-        for (int j = 1; j <= 9;)
+        for (int j = 0; j < 9;)
         {
-            c = getchar();
+            c = getc(fp);
             if (c != '\n' && c != ' ')
             {
                 for (int k = 0; k < 6; k++)
@@ -114,11 +126,34 @@ bool input()
             }
         }
     }
+    while ((c = getc(fp)) != EOF)
+    {
+        if (c == 'R')
+        {
+            R();
+        }
+    }
+    fclose(fp);
+    return 0;
+}
+bool output()
+{
+    FILE *fp;
+    fp = fopen("output.txt", "w");
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            putc(trans(i, j) + '0', fp);
+        }
+        putc('\n', fp);
+    }
+    fclose(fp);
     return 0;
 }
 int main(int argc, const char *argv[])
 {
     input();
-    Ri();
+    output();
     return 0;
 }
