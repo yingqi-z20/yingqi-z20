@@ -48,6 +48,7 @@ int *sur_next[6][12] = {
      &color[2][4], &color[1][8], &color[1][7], &color[1][6], &color[3][4],
      &color[3][3], &color[3][2]},
 };
+int *clr[6][9];
 void spin(int s, bool b)
 {
     int temp[3];
@@ -94,18 +95,16 @@ int trans(int i, int j)
     }
     return 1024;
 }
-/*int arctrans(int i, int j)
+void initialize()
 {
-    for (int r = 0; r < 9; r++)
+    for (int i = 0; i < 6; i++)
     {
-        if (trans(i, r) == j)
+        for (int j = 0; j < 9; j++)
         {
-            return r;
+            clr[i][j] = &color[sur_trans[i]][trans(i, j)];
         }
     }
-    return 1024;
 }
-*/
 bool input()
 {
     FILE *fp;
@@ -124,18 +123,11 @@ bool input()
                 {
                     if (color_name[k] == c)
                     {
-                        color[sur_trans[i]][trans(i, j)] = k;
+                        *clr[i][j] = k;
                         j++;
                     }
                 }
             }
-        }
-    }
-    while ((c = getc(fp)) != EOF)
-    {
-        if (c == 'R')
-        {
-            R();
         }
     }
     fclose(fp);
@@ -149,7 +141,7 @@ bool output()
     {
         for (int j = 0; j < 9; j++)
         {
-            putc(color_name[color[sur_trans[i]][trans(i, j)]], fp);
+            putc(color_name[*clr[i][j]], fp);
         }
         putc('\n', fp);
     }
@@ -158,6 +150,7 @@ bool output()
 }
 int main(int argc, const char *argv[])
 {
+    initialize();
     if (input())
         return 0;
     output();
