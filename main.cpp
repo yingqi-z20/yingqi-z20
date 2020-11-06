@@ -61,14 +61,17 @@ void spin(int s, bool b)
     *sur_next[s][9] = temp[0];
     *sur_next[s][10] = temp[1];
     *sur_next[s][11] = temp[2];
-    temp[0] = color[s][1];
-    temp[1] = color[s][8];
-    for (int i = 8; i > 2; i--)
+    for (int j = 0; j < 3; j++)
     {
-        color[s][i % 8 + 1] = color[s][(i + 6) % 8 + 1];
+        temp[0] = color[s][1];
+        temp[1] = color[s][8];
+        for (int i = 8; i > 2; i--)
+        {
+            color[s][i % 8 + 1] = color[s][(i + 6) % 8 + 1];
+        }
+        color[s][3] = temp[0];
+        color[s][2] = temp[1];
     }
-    color[s][3] = temp[0];
-    color[s][2] = temp[1];
     if (b == 0)
     {
         spin(s, 1);
@@ -93,7 +96,6 @@ int trans(int i, int j)
 }
 /*int arctrans(int i, int j)
 {
-//    i = sur_trans[i];
     for (int r = 0; r < 9; r++)
     {
         if (trans(i, r) == j)
@@ -102,11 +104,14 @@ int trans(int i, int j)
         }
     }
     return 1024;
-}*/
+}
+*/
 bool input()
 {
     FILE *fp;
     fp = fopen("input.txt", "r");
+    if (fp == 0)
+        return 1;
     char c;
     for (int i = 0; i < 6; i++)
     {
@@ -144,7 +149,7 @@ bool output()
     {
         for (int j = 0; j < 9; j++)
         {
-            putc(trans(i, j) + '0', fp);
+            putc(color_name[color[sur_trans[i]][trans(i, j)]], fp);
         }
         putc('\n', fp);
     }
@@ -153,7 +158,8 @@ bool output()
 }
 int main(int argc, const char *argv[])
 {
-    input();
+    if (input())
+        return 0;
     output();
     return 0;
 }
