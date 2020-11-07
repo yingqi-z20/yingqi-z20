@@ -30,6 +30,7 @@ private:
                                    {6, 7, 8, 5, 0, 1, 4, 3, 2},
                                    {2, 3, 4, 1, 0, 5, 8, 7, 6}};
     const char color_name[6] = {'R', 'B', 'Y', 'G', 'O', 'W'};
+    int *clr[6][9];
     int *sur_next[6][12] = {
         {&color[2][2], &color[2][1], &color[2][8], &color[4][2], &color[4][1],
          &color[4][8], &color[3][8], &color[3][1], &color[3][2], &color[5][8],
@@ -66,9 +67,6 @@ private:
         }
         return 1024;
     }
-
-public:
-    int *clr[6][9];
     void spin(int s, bool b)
     {
         int temp[3];
@@ -109,8 +107,11 @@ public:
             }
         }
     }
+
+public:
     bool input()
     {
+        initialize();
         FILE *fp;
         fp = fopen("input.txt", "r");
         if (fp == 0)
@@ -137,32 +138,15 @@ public:
         fclose(fp);
         return 0;
     }
-    bool output()
-    {
-        FILE *fp;
-        fp = fopen("output.txt", "w");
-        for (int i = 0; i < 6; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                putc(color_name[*clr[i][j]], fp);
-            }
-            putc('\n', fp);
-        }
-        fclose(fp);
-        return 0;
-    }
     void restore()
     {
     }
 };
 int main(int argc, const char *argv[])
 {
-    cube c;
-    c.initialize();
-    if (c.input())
+    cube cubic;
+    if (cubic.input())
         return 0;
-    c.restore();
-    c.output();
+    cubic.restore();
     return 0;
 }
