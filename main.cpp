@@ -23,7 +23,7 @@
 using namespace std;
 class cube
 {
-private:
+  private:
     int color[6][9] = {0};
     const int sur_trans[6] = {2, 3, 0, 1, 4, 5};
     const int color_trans[3][9] = {{8, 7, 6, 1, 0, 5, 2, 3, 4},
@@ -108,20 +108,16 @@ private:
         }
     }
 
-public:
+  public:
     bool input()
     {
         initialize();
-        FILE *fp;
-        fp = fopen("input.txt", "r");
-        if (fp == 0)
-            return 1;
         char c;
         for (int i = 0; i < 6; i++)
         {
             for (int j = 0; j < 9;)
             {
-                c = getc(fp);
+                c = getchar();
                 if (c != '\n' && c != ' ')
                 {
                     for (int k = 0; k < 6; k++)
@@ -135,7 +131,6 @@ public:
                 }
             }
         }
-        fclose(fp);
         return 0;
     }
     void restore()
