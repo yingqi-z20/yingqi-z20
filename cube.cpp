@@ -142,75 +142,87 @@ int distant()
 }
 void m0(bool b)
 {
-    R();
     if (b)
         printf("R ");
+    else
+        R();
 }
 void m1(bool b)
 {
-    Ri();
     if (b)
         printf("Ri ");
+    else
+        Ri();
 }
 void m2(bool b)
 {
-    L();
     if (b)
         printf("L ");
+    else
+        L();
 }
 void m3(bool b)
 {
-    Li();
     if (b)
         printf("Li ");
+    else
+        Li();
 }
 void m4(bool b)
 {
-    B();
     if (b)
         printf("B ");
+    else
+        B();
 }
 void m5(bool b)
 {
-    Bi();
     if (b)
         printf("Bi ");
+    else
+        Bi();
 }
 void m6(bool b)
 {
-    D();
     if (b)
         printf("D ");
+    else
+        D();
 }
 void m7(bool b)
 {
-    Di();
     if (b)
         printf("Di ");
+    else
+        Di();
 }
 void m8(bool b)
 {
-    F();
     if (b)
         printf("F ");
+    else
+        F();
 }
 void m9(bool b)
 {
-    Fi();
     if (b)
         printf("Fi ");
+    else
+        Fi();
 }
 void m10(bool b)
 {
-    U();
     if (b)
         printf("U ");
+    else
+        U();
 }
 void m11(bool b)
 {
-    Ui();
     if (b)
         printf("Ui ");
+    else
+        Ui();
 }
 void (*formula[12])(bool) = {m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11};
 
@@ -247,7 +259,6 @@ void restore()
         formula[i](0);
         if (distant() < d)
         {
-            download();
             formula[i](1);
             upload();
             d = distant();
