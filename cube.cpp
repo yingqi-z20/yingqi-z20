@@ -69,32 +69,47 @@ int trans(int i, int j)
 void spin(int s, bool b)
 {
     int temp[3];
-    temp[0] = *sur_next[s][0];
-    temp[1] = *sur_next[s][1];
-    temp[2] = *sur_next[s][2];
-    for (int i = 0; i < 9; i++)
+    if (b)
     {
-        *sur_next[s][i] = *sur_next[s][i + 3];
+        temp[0] = *sur_next[s][0];
+        temp[1] = *sur_next[s][1];
+        temp[2] = *sur_next[s][2];
+        for (int i = 0; i < 9; i++)
+        {
+            *sur_next[s][i] = *sur_next[s][i + 3];
+        }
+        *sur_next[s][9] = temp[0];
+        *sur_next[s][10] = temp[1];
+        *sur_next[s][11] = temp[2];
+        temp[0] = color[s][3];
+        temp[1] = color[s][2];
+        for (int i = 3; i < 9; i++)
+        {
+            color[s][i - 1] = color[s][i % 8 + 1];
+        }
+        color[s][1] = temp[0];
+        color[s][8] = temp[1];
     }
-    *sur_next[s][9] = temp[0];
-    *sur_next[s][10] = temp[1];
-    *sur_next[s][11] = temp[2];
-    //        这里需要优化
-    for (int j = 0; j < 3; j++)
+    else
     {
+        temp[0] = *sur_next[s][9];
+        temp[1] = *sur_next[s][10];
+        temp[2] = *sur_next[s][11];
+        for (int i = 11; i >= 3; i--)
+        {
+            *sur_next[s][i] = *sur_next[s][i - 3];
+        }
+        *sur_next[s][0] = temp[0];
+        *sur_next[s][1] = temp[1];
+        *sur_next[s][2] = temp[2];
         temp[0] = color[s][1];
         temp[1] = color[s][8];
         for (int i = 8; i > 2; i--)
         {
-            color[s][i % 8 + 1] = color[s][(i + 6) % 8 + 1];
+            color[s][i % 8 + 1] = color[s][i - 1];
         }
         color[s][3] = temp[0];
         color[s][2] = temp[1];
-    }
-    if (b == 0)
-    {
-        spin(s, 1);
-        spin(s, 1);
     }
 }
 void initialize()
@@ -224,6 +239,7 @@ void m11(bool b)
     else
         Ui();
 }
+const int fm_n = 12;
 void (*formula[12])(bool) = {m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11};
 
 bool input()
@@ -254,20 +270,66 @@ bool input()
 }
 void restore()
 {
-    for (int i = 0; i < 12; i++)
+    while (d != 0)
     {
-        formula[i](0);
-        if (distant() < d)
+        for (int i = 0; i < fm_n; i++)
         {
-            formula[i](1);
-            upload();
-            d = distant();
-            break;
+            formula[i](0);
+            if (distant() < d)
+            {
+                formula[i](1);
+                upload();
+                d = distant();
+                goto end;
+            }
+            download();
         }
-        download();
+        for (int i = 0; i < fm_n; i++)
+        {
+            formula[i](0);
+            for (int j = 0; j < fm_n; j++)
+            {
+                formula[j](0);
+                if (distant() < d)
+                {
+                    formula[i](1);
+                    formula[j](1);
+                    upload();
+                    d = distant();
+                    goto end;
+                }
+                download();
+            }
+            download();
+        }
+        for (int i = 0; i < fm_n; i++)
+        {
+            formula[i](0);
+            for (int j = 0; j < fm_n; j++)
+            {
+                formula[j](0);
+                for (int k = 0; k < fm_n; k++)
+                {
+                    formula[k](0);
+                    if (distant() < d)
+                    {
+                        formula[i](1);
+                        formula[j](1);
+                        formula[k](1);
+                        upload();
+                        d = distant();
+                        goto end;
+                    }
+                    download();
+                }
+                download();
+            }
+            download();
+        }
+        printf("\nsearch failed!\n");
+        break;
+    end:;
     }
-    if (d != 0)
-        restore();
 }
 int main(int argc, const char *argv[])
 {
