@@ -272,17 +272,24 @@ void restore()
 {
     while (d != 0)
     {
+        int d_min = 1024, i_min = 1024;
         for (int i = 0; i < fm_n; i++)
         {
             formula[i](0);
-            if (distant() < d)
+            if (distant() < d_min)
             {
-                formula[i](1);
-                upload();
-                d = distant();
-                goto end;
+                d_min = distant();
+                i_min = i;
             }
             download();
+        }
+        if (d_min < d)
+        {
+            formula[i_min](0);
+            formula[i_min](1);
+            upload();
+            d = distant();
+            goto end;
         }
         for (int i = 0; i < fm_n; i++)
         {
@@ -326,8 +333,10 @@ void restore()
             }
             download();
         }
-        printf("\nsearch failed!\n");
-        break;
+        formula[i_min](0);
+        formula[i_min](1);
+        upload();
+        d = distant();
     end:;
     }
 }
