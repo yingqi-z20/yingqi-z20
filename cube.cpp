@@ -22,15 +22,15 @@
 
 using namespace std;
 
-int color[6][9] = {0};
-int backup[6][9] = {0};
-const int sur_trans[6] = {2, 3, 0, 1, 4, 5};
-const int color_trans[3][9] = {{8, 7, 6, 1, 0, 5, 2, 3, 4},
-                               {6, 7, 8, 5, 0, 1, 4, 3, 2},
-                               {2, 3, 4, 1, 0, 5, 8, 7, 6}};
+short color[6][9] = {0};
+short backup[6][9] = {0};
+const short sur_trans[6] = {2, 3, 0, 1, 4, 5};
+const short color_trans[3][9] = {{8, 7, 6, 1, 0, 5, 2, 3, 4},
+                                 {6, 7, 8, 5, 0, 1, 4, 3, 2},
+                                 {2, 3, 4, 1, 0, 5, 8, 7, 6}};
 const char color_name[6] = {'R', 'B', 'Y', 'G', 'O', 'W'};
-int *clr[6][9];
-int *sur_next[6][12] = {
+short *clr[6][9];
+short *sur_next[6][12] = {
     {&color[2][2], &color[2][1], &color[2][8], &color[4][2], &color[4][1],
      &color[4][8], &color[3][8], &color[3][1], &color[3][2], &color[5][8],
      &color[5][1], &color[5][2]},
@@ -50,7 +50,7 @@ int *sur_next[6][12] = {
      &color[2][4], &color[1][8], &color[1][7], &color[1][6], &color[3][4],
      &color[3][3], &color[3][2]},
 };
-int trans(int i, int j)
+short trans(short i, short j)
 {
     switch (i)
     {
@@ -66,15 +66,15 @@ int trans(int i, int j)
     }
     return 1024;
 }
-void spin(int s, bool b)
+void spin(short s, bool b)
 {
-    int temp[3];
+    short temp[3];
     if (b)
     {
         temp[0] = *sur_next[s][0];
         temp[1] = *sur_next[s][1];
         temp[2] = *sur_next[s][2];
-        for (int i = 0; i < 9; i++)
+        for (short i = 0; i < 9; i++)
         {
             *sur_next[s][i] = *sur_next[s][i + 3];
         }
@@ -83,7 +83,7 @@ void spin(int s, bool b)
         *sur_next[s][11] = temp[2];
         temp[0] = color[s][3];
         temp[1] = color[s][2];
-        for (int i = 3; i < 9; i++)
+        for (short i = 3; i < 9; i++)
         {
             color[s][i - 1] = color[s][i % 8 + 1];
         }
@@ -95,7 +95,7 @@ void spin(int s, bool b)
         temp[0] = *sur_next[s][9];
         temp[1] = *sur_next[s][10];
         temp[2] = *sur_next[s][11];
-        for (int i = 11; i >= 3; i--)
+        for (short i = 11; i >= 3; i--)
         {
             *sur_next[s][i] = *sur_next[s][i - 3];
         }
@@ -104,7 +104,7 @@ void spin(int s, bool b)
         *sur_next[s][2] = temp[2];
         temp[0] = color[s][1];
         temp[1] = color[s][8];
-        for (int i = 8; i > 2; i--)
+        for (short i = 8; i > 2; i--)
         {
             color[s][i % 8 + 1] = color[s][i - 1];
         }
@@ -114,9 +114,9 @@ void spin(int s, bool b)
 }
 void initialize()
 {
-    for (int i = 0; i < 6; i++)
+    for (short i = 0; i < 6; i++)
     {
-        for (int j = 0; j < 9; j++)
+        for (short j = 0; j < 9; j++)
         {
             clr[i][j] = &color[sur_trans[i]][trans(i, j)];
         }
@@ -124,9 +124,9 @@ void initialize()
 }
 void upload()
 {
-    for (int i = 0; i < 6; i++)
+    for (short i = 0; i < 6; i++)
     {
-        for (int j = 0; j < 9; j++)
+        for (short j = 0; j < 9; j++)
         {
             backup[i][j] = color[i][j];
         }
@@ -134,21 +134,21 @@ void upload()
 }
 void download()
 {
-    for (int i = 0; i < 6; i++)
+    for (short i = 0; i < 6; i++)
     {
-        for (int j = 0; j < 9; j++)
+        for (short j = 0; j < 9; j++)
         {
             color[i][j] = backup[i][j];
         }
     }
 }
-int d = 256;
-int distant()
+short d = 256;
+short distant()
 {
-    int r = 0;
-    for (int i = 0; i < 6; i++)
+    short r = 0;
+    for (short i = 0; i < 6; i++)
     {
-        for (int j = 0; j < 9; j++)
+        for (short j = 0; j < 9; j++)
         {
             r += (color[i][j] != color[i][0]);
         }
@@ -239,21 +239,21 @@ void m11(bool b)
     else
         Ui();
 }
-const int fm_n = 12;
+const short fm_n = 12;
 void (*formula[12])(bool) = {m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11};
 
 bool input()
 {
     initialize();
     char c;
-    for (int i = 0; i < 6; i++)
+    for (short i = 0; i < 6; i++)
     {
-        for (int j = 0; j < 9;)
+        for (short j = 0; j < 9;)
         {
             c = getchar();
             if (c != '\n' && c != ' ')
             {
-                for (int k = 0; k < 6; k++)
+                for (short k = 0; k < 6; k++)
                 {
                     if (color_name[k] == c)
                     {
@@ -272,8 +272,8 @@ void restore()
 {
     while (d != 0)
     {
-        int d_min = 1024, i_min = 1024;
-        for (int i = 0; i < fm_n; i++)
+        short d_min = 1024, i_min = 1024;
+        for (short i = 0; i < fm_n; i++)
         {
             formula[i](0);
             if (distant() < d_min)
@@ -290,48 +290,6 @@ void restore()
             upload();
             d = distant();
             goto end;
-        }
-        for (int i = 0; i < fm_n; i++)
-        {
-            formula[i](0);
-            for (int j = 0; j < fm_n; j++)
-            {
-                formula[j](0);
-                if (distant() < d)
-                {
-                    formula[i](1);
-                    formula[j](1);
-                    upload();
-                    d = distant();
-                    goto end;
-                }
-                download();
-            }
-            download();
-        }
-        for (int i = 0; i < fm_n; i++)
-        {
-            formula[i](0);
-            for (int j = 0; j < fm_n; j++)
-            {
-                formula[j](0);
-                for (int k = 0; k < fm_n; k++)
-                {
-                    formula[k](0);
-                    if (distant() < d)
-                    {
-                        formula[i](1);
-                        formula[j](1);
-                        formula[k](1);
-                        upload();
-                        d = distant();
-                        goto end;
-                    }
-                    download();
-                }
-                download();
-            }
-            download();
         }
         formula[i_min](0);
         formula[i_min](1);
