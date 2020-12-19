@@ -3,6 +3,7 @@
 //  cube
 //
 //  Created by 张英奇 on 2020/9/20.
+//  Copyright © 2020 张英奇 & 张程皓. All rights reserved.
 //
 
 #include <cstdio>
