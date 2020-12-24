@@ -23,6 +23,9 @@
 
 using namespace std;
 
+int success = 0;
+int k = 0;    //枚举的最大步数
+int step = 0; //步数
 short color[6][9] = {0};
 short backup[6][9] = {0};
 const short sur_trans[6] = {2, 3, 0, 1, 4, 5};
@@ -156,6 +159,7 @@ short distant()
     }
     return r;
 }
+
 void m0(bool b)
 {
     if (b)
@@ -269,40 +273,61 @@ bool input()
     d = distant();
     return 0;
 }
-void restore()
+
+int test(int step)
 {
-    while (d != 0)
-    {
-        short d_min = 1024, i_min = 1024;
-        for (short i = 0; i < fm_n; i++)
-        {
-            formula[i](0);
-            if (distant() < d_min)
+    int cnt = 0;
+    for (int i = 1; i < 6; ++i)
+        for (int j = 1; j < 9; ++j)
+            if (color[i][j] != color[i][0])
             {
-                d_min = distant();
-                i_min = i;
+                if ((1 / 10) * (++cnt) + step > k) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
+                    return 0;
             }
-            download();
-        }
-        if (d_min < d)
+    return 1;
+}
+void A_star(int step, int pre)
+{
+    if (step == k)
+    {
+        if (!distant())
+            success = 1;
+        return;
+    }
+    //达到当前限制的最大深度
+    if (success)
+        return;
+    for (int i = 0; i < 12; ++i)
+    {
+        formula[i](0);
+        if (pre + i == 11)
         {
-            formula[i_min](0);
-            formula[i_min](1);
-            upload();
-            d = distant();
-            goto end;
+            formula[i + 1 - i % 2](0);
+            continue; //加入了上述最优性剪枝
         }
-        formula[i_min](0);
-        formula[i_min](1);
-        upload();
-        d = distant();
-    end:;
+        if (test(step) && !success)
+            A_star(step + 1, i); //A*估价合法再向下搜索
+
+        formula[i + 1 - i % 2](0);
+        if (success)
+        {
+            formula[i + 1 - i % 2](1);
+            break;
+        }
     }
 }
 int main(int argc, const char *argv[])
 {
     if (input())
         return 0;
-    restore();
+    while (++k) //枚举最大深度
+    {
+        A_star(0, -1);
+        if (success)
+        {
+            printf("%d\n", k);
+            break;
+        }
+    }
     return 0;
 }
