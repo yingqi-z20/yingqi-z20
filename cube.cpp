@@ -23,9 +23,8 @@
 
 using namespace std;
 
-int success = 0;
-int k = 0;    //枚举的最大步数
-int step = 0; //步数
+bool success = 0;
+int k = 0; //枚举的最大步数
 short color[6][9] = {0};
 short backup[6][9] = {0};
 const short sur_trans[6] = {2, 3, 0, 1, 4, 5};
@@ -152,9 +151,9 @@ short distant()
     short r = 0;
     for (short i = 0; i < 6; i++)
     {
-        for (short j = 0; j < 9; j++)
+        for (short j = 1; j < 9; j++)
         {
-            r += (color[i][j] != color[i][0]);
+            r += (color[i][0] != color[i][j]);
         }
     }
     return r;
@@ -273,15 +272,31 @@ bool input()
     d = distant();
     return 0;
 }
-
-int test(int step)
+//
+bool output()
+{
+    FILE *fp;
+    fp = stdout;
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            putc(color_name[color[sur_trans[i]][trans(i, j)]], fp);
+        }
+        putc('\n', fp);
+    }
+    fclose(fp);
+    return 0;
+}
+//
+bool test(int step)
 {
     int cnt = 0;
     for (int i = 1; i < 6; ++i)
         for (int j = 1; j < 9; ++j)
             if (color[i][j] != color[i][0])
             {
-                if ((1 / 10) * (++cnt) + step > k) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
+                if (0.05 * (++cnt) + step > k) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
                     return 0;
             }
     return 1;
@@ -297,21 +312,22 @@ void A_star(int step, int pre)
     //达到当前限制的最大深度
     if (success)
         return;
-    for (int i = 0; i < 12; ++i)
+    for (int i = 0; i < fm_n; ++i)
     {
         formula[i](0);
-        if (pre + i == 11)
+        //output();
+        if (pre == i + 1 - 2 * (i % 2))
         {
-            formula[i + 1 - i % 2](0);
+            formula[i + 1 - 2 * (i % 2)](0);
             continue; //加入了上述最优性剪枝
         }
         if (test(step) && !success)
             A_star(step + 1, i); //A*估价合法再向下搜索
 
-        formula[i + 1 - i % 2](0);
+        formula[i + 1 - 2 * (i % 2)](0);
         if (success)
         {
-            formula[i + 1 - i % 2](1);
+            formula[i + 1 - 2 * (i % 2)](1);
             break;
         }
     }
@@ -320,12 +336,14 @@ int main(int argc, const char *argv[])
 {
     if (input())
         return 0;
+    upload();
     while (++k) //枚举最大深度
     {
+        download();
         A_star(0, -1);
         if (success)
         {
-            printf("%d\n", k);
+            fprintf(stderr, "%d\n", k);
             break;
         }
     }
