@@ -272,7 +272,6 @@ bool output()
         }
         putc('\n', fp);
     }
-    fclose(fp);
     return 0;
 }
 //
@@ -288,6 +287,7 @@ bool test(int step)
             }
     return 1;
 }
+short op[64];
 void A_star(int step, int pre)
 {
     if (step == k)
@@ -314,7 +314,14 @@ void A_star(int step, int pre)
         formula[i + 1 - 2 * (i % 2)](0);
         if (success)
         {
-            formula[i + 1 - 2 * (i % 2)](1);
+            for (int j = 0; j < 64; j++)
+            {
+                if (op[j] == -1)
+                {
+                    op[j] = i;
+                    break;
+                }
+            }
             break;
         }
     }
@@ -323,6 +330,10 @@ int main(int argc, const char *argv[])
 {
     if (input())
         return 0;
+    for (int i = 0; i < 64; i++)
+    {
+        op[i] = -1;
+    }
     upload();
     while (++k) //枚举最大深度
     {
@@ -330,6 +341,11 @@ int main(int argc, const char *argv[])
         A_star(0, -1);
         if (success)
         {
+            for (int i = 63; i >= 0; i--)
+            {
+                if (op[i] != -1)
+                    formula[op[i]](1);
+            }
             fprintf(stderr, "%d\n", k);
             break;
         }
