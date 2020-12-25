@@ -28,9 +28,12 @@ int k = 0; //枚举的最大步数
 short color[6][9] = {0};
 short backup[6][9] = {0};
 const short sur_trans[6] = {2, 3, 0, 1, 4, 5};
-const short color_trans[3][9] = {{8, 7, 6, 1, 0, 5, 2, 3, 4},
-                                 {6, 7, 8, 5, 0, 1, 4, 3, 2},
-                                 {2, 3, 4, 1, 0, 5, 8, 7, 6}};
+const int color_trans[6][9] = {{8, 7, 6, 1, 0, 5, 2, 3, 4},
+                               {6, 7, 8, 5, 0, 1, 4, 3, 2},
+                               {4, 3, 2, 5, 0, 1, 6, 7, 8},
+                               {2, 3, 4, 1, 0, 5, 8, 7, 6},
+                               {8, 7, 6, 1, 0, 5, 2, 3, 4},
+                               {2, 3, 4, 1, 0, 5, 8, 7, 6}};
 const char color_name[6] = {'R', 'B', 'Y', 'G', 'O', 'W'};
 short *clr[6][9];
 short *sur_next[6][12] = {
@@ -53,22 +56,6 @@ short *sur_next[6][12] = {
      &color[2][4], &color[1][8], &color[1][7], &color[1][6], &color[3][4],
      &color[3][3], &color[3][2]},
 };
-short trans(short i, short j)
-{
-    switch (i)
-    {
-    case 0:
-    case 2:
-    case 4:
-        return color_trans[0][j];
-    case 1:
-    case 3:
-        return color_trans[1][j];
-    case 5:
-        return color_trans[2][j];
-    }
-    return 1024;
-}
 void spin(short s, bool b)
 {
     short temp[3];
@@ -121,7 +108,7 @@ void initialize()
     {
         for (short j = 0; j < 9; j++)
         {
-            clr[i][j] = &color[sur_trans[i]][trans(i, j)];
+            clr[i][j] = &color[sur_trans[i]][color_trans[i][j]];
         }
     }
 }
@@ -281,7 +268,7 @@ bool output()
     {
         for (int j = 0; j < 9; j++)
         {
-            putc(color_name[color[sur_trans[i]][trans(i, j)]], fp);
+            putc(color_name[color[sur_trans[i]][color_trans[i][j]]], fp);
         }
         putc('\n', fp);
     }
