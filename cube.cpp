@@ -24,7 +24,7 @@
 using namespace std;
 
 bool success = 0;
-int k = 0;    //枚举的最大步数
+int k = 0; //枚举的最大步数
 short color[6][9] = {0};
 short backup[6][9] = {0};
 const short sur_trans[6] = {2, 3, 0, 1, 4, 5};
@@ -37,24 +37,24 @@ const int color_trans[6][9] = {{8, 7, 6, 1, 0, 5, 2, 3, 4},
 const char color_name[6] = {'R', 'B', 'Y', 'G', 'O', 'W'};
 short *clr[6][9];
 short *sur_next[6][12] = {
-        {&color[2][2], &color[2][1], &color[2][8], &color[4][2], &color[4][1],
-                &color[4][8], &color[3][8], &color[3][1], &color[3][2], &color[5][8],
-                &color[5][1], &color[5][2]},
-        {&color[2][4], &color[2][5], &color[2][6], &color[4][4], &color[4][5],
-                &color[4][6], &color[3][6], &color[3][5], &color[3][4], &color[5][6],
-                &color[5][5], &color[5][4]},
-        {&color[0][2], &color[0][1], &color[0][8], &color[5][2], &color[5][3],
-                &color[5][4], &color[1][8], &color[1][1], &color[1][2], &color[4][4],
-                &color[4][3], &color[4][2]},
-        {&color[0][4], &color[0][5], &color[0][6], &color[5][8], &color[5][7],
-                &color[5][6], &color[1][6], &color[1][5], &color[1][4], &color[4][6],
-                &color[4][7], &color[4][8]},
-        {&color[0][4], &color[0][3], &color[0][2], &color[2][8], &color[2][7],
-                &color[2][6], &color[1][2], &color[1][3], &color[1][4], &color[3][6],
-                &color[3][7], &color[3][8]},
-        {&color[0][6], &color[0][7], &color[0][8], &color[2][2], &color[2][3],
-                &color[2][4], &color[1][8], &color[1][7], &color[1][6], &color[3][4],
-                &color[3][3], &color[3][2]},
+    {&color[2][2], &color[2][1], &color[2][8], &color[4][2], &color[4][1],
+     &color[4][8], &color[3][8], &color[3][1], &color[3][2], &color[5][8],
+     &color[5][1], &color[5][2]},
+    {&color[2][4], &color[2][5], &color[2][6], &color[4][4], &color[4][5],
+     &color[4][6], &color[3][6], &color[3][5], &color[3][4], &color[5][6],
+     &color[5][5], &color[5][4]},
+    {&color[0][2], &color[0][1], &color[0][8], &color[5][2], &color[5][3],
+     &color[5][4], &color[1][8], &color[1][1], &color[1][2], &color[4][4],
+     &color[4][3], &color[4][2]},
+    {&color[0][4], &color[0][5], &color[0][6], &color[5][8], &color[5][7],
+     &color[5][6], &color[1][6], &color[1][5], &color[1][4], &color[4][6],
+     &color[4][7], &color[4][8]},
+    {&color[0][4], &color[0][3], &color[0][2], &color[2][8], &color[2][7],
+     &color[2][6], &color[1][2], &color[1][3], &color[1][4], &color[3][6],
+     &color[3][7], &color[3][8]},
+    {&color[0][6], &color[0][7], &color[0][8], &color[2][2], &color[2][3],
+     &color[2][4], &color[1][8], &color[1][7], &color[1][6], &color[3][4],
+     &color[3][3], &color[3][2]},
 };
 void spin(short s, bool b)
 {
@@ -260,11 +260,14 @@ bool input()
     return 0;
 }
 //
-bool output() {
+bool output()
+{
     FILE *fp;
     fp = stdout;
-    for (int i = 0; i < 6; i++) {
-        for (int j = 0; j < 9; j++) {
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
             putc(color_name[color[sur_trans[i]][color_trans[i][j]]], fp);
         }
         putc('\n', fp);
@@ -311,8 +314,10 @@ void A_star(int step, int pre)
         formula[i + 1 - 2 * (i % 2)](0);
         if (success)
         {
-            for(int j = 0; j < 64; j++) {
-                if(op[j] == -1) {
+            for (int j = 0; j < 64; j++)
+            {
+                if (op[j] == -1)
+                {
                     op[j] = i;
                     break;
                 }
@@ -325,8 +330,9 @@ int main(int argc, const char *argv[])
 {
     if (input())
         return 0;
-    for(int i=0;i<64;i++) {
-        op[i]=-1;
+    for (int i = 0; i < 64; i++)
+    {
+        op[i] = -1;
     }
     upload();
     while (++k < 32) //枚举最大深度
@@ -335,10 +341,12 @@ int main(int argc, const char *argv[])
         A_star(0, -1);
         if (success)
         {
-            for(int i = 63;i >= 0;i--) {
-                if(op[i] != -1) formula[op[i]](1);
+            for (int i = 63; i >= 0; i--)
+            {
+                if (op[i] != -1)
+                    formula[op[i]](1);
             }
-            fprintf(stderr, "%d\n", k);
+            //fprintf(stderr, "%d\n", k);
             break;
         }
         if (k > 30)
