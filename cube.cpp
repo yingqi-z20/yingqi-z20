@@ -145,7 +145,16 @@ short distant()
     }
     return r;
 }
-
+short distant1()
+{
+    short r = 0;
+    for (short j = 1; j < 9; j++)
+    {
+        r += (color[4][0] != color[4][j] && color[5][0] != color[4][j]);
+        r += (color[4][0] != color[5][j] && color[5][0] != color[5][j]);
+    }
+    return r;
+}
 void m0(bool b)
 {
     if (b)
@@ -290,11 +299,12 @@ void m17(bool b)
         D();
     }
 }
-const short fm_n = 18;
+const short fm_n = 18, fm_n1 = 12;
 void (*formula[fm_n])(bool) = {m0, m1, m2, m3, m4, m5,
                                m6, m7, m8, m9, m10, m11,
                                m12, m13, m14, m15, m16, m17};
-
+void (*formula1[fm_n1])(bool) = {m0, m1, m2, m3, m4, m5,
+                                 m6, m7, m12, m13, m14, m15};
 bool input()
 {
     //initialize();
@@ -346,6 +356,18 @@ bool test(int step)
             }
     return 1;
 }
+bool test1(int step)
+{
+    int cnt = 0;
+    for (int i = 4; i < 6; ++i)
+        for (int j = 1; j < 9; ++j)
+            if (color[i][j] != color[4][0] && color[i][j] != color[5][0])
+            {
+                if (0.15 * (++cnt) > k - step) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
+                    return 0;
+            }
+    return 1;
+}
 short op[64];
 void A_star(int step, int pre)
 {
@@ -385,6 +407,82 @@ void A_star(int step, int pre)
         }
     }
 }
+void A_star1(int step, int pre)
+{
+    //output();
+    if (!distant1())
+        success = 1;
+    if (step == k || success)
+    {
+        return;
+    }
+    //达到当前限制的最大深度
+    for (int i = 0; i < fm_n1; ++i)
+    {
+        formula1[i](0);
+        //output();
+        int re = i < 8 ? i + 1 - 2 * (i % 2) : i;
+        if (pre == re)
+        {
+            formula1[re](0);
+            continue; //加入了上述最优性剪枝
+        }
+        if (test1(step))
+            A_star1(step + 1, i); //A*估价合法再向下搜索
+        if (success)
+        {
+            upload();
+            for (int j = 0; j < 64; j++)
+            {
+                if (op[j] == -1)
+                {
+                    op[j] = i < 8 ? i : i + 4;
+                    break;
+                }
+            }
+            break;
+        }
+        formula1[re](0);
+    }
+}
+void A_star2(int step, int pre)
+{
+    if (step == k)
+    {
+        if (!distant())
+            success = 1;
+        return;
+    }
+    //达到当前限制的最大深度
+    if (success)
+        return;
+    for (int i = 8; i < fm_n; ++i)
+    {
+        formula[i](0);
+        //output();
+        int re = i < 12 ? i + 1 - 2 * (i % 2) : i;
+        if (pre == re)
+        {
+            formula[re](0);
+            continue; //加入了上述最优性剪枝
+        }
+        if (test(step) && !success)
+            A_star2(step + 1, i); //A*估价合法再向下搜索
+        formula[re](0);
+        if (success)
+        {
+            for (int j = 0; j < 64; j++)
+            {
+                if (op[j] == -1)
+                {
+                    op[j] = i;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+}
 int main(int argc, const char *argv[])
 {
     if (input())
@@ -394,10 +492,52 @@ int main(int argc, const char *argv[])
         op[i] = -1;
     }
     upload();
-    while (++k < 9) //枚举最大深度
+    /*while (++k < 9) //枚举最大深度
     {
         download();
         A_star(0, -1);
+        if (success)
+        {
+            for(int i = 63;i >= 0;i--) {
+                if(op[i] != -1) formula[op[i]](1);
+            }
+            fprintf(stderr, "%d\n", k);
+            return 0;
+        }
+        if (k == 8)
+            fprintf(stderr, "-1");
+    }
+    for(int i=0;i<64;i++) {
+        op[i]=-1;
+    }*/
+    k = 0;
+    while (++k) //枚举最大深度
+    {
+        download();
+        A_star1(0, -1);
+        if (success)
+        {
+            success = 0;
+            for (int i = 63; i >= 0; i--)
+            {
+                if (op[i] != -1)
+                    formula[op[i]](1);
+            }
+            fprintf(stderr, "%d\n", k);
+            break;
+        }
+        if (k == 8)
+            fprintf(stderr, "-1");
+    }
+    for (int i = 0; i < 64; i++)
+    {
+        op[i] = -1;
+    }
+    k = 0;
+    while (++k) //枚举最大深度
+    {
+        download();
+        A_star2(0, -1);
         if (success)
         {
             for (int i = 63; i >= 0; i--)
