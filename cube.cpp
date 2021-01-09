@@ -27,7 +27,6 @@ const int color_trans[6][9] = {{8, 7, 6, 1, 0, 5, 2, 3, 4},
                                {8, 7, 6, 1, 0, 5, 2, 3, 4},
                                {2, 3, 4, 1, 0, 5, 8, 7, 6}};
 const char color_name[6] = {'R', 'B', 'Y', 'G', 'O', 'W'};
-//short *clr[6][9];
 short *sur_next[6][12] = {
     {&color[2][2], &color[2][1], &color[2][8], &color[4][2], &color[4][1],
      &color[4][8], &color[3][8], &color[3][1], &color[3][2], &color[5][8],
@@ -104,19 +103,6 @@ void spin(short s, bool b)
         color[s][2] = temp[1];
     }
 }
-
-/*void initialize()
-{
-    for (short i = 0; i < 6; i++)
-    {
-        for (short j = 0; j < 9; j++)
-        {
-            clr[i][j] = &color[sur_trans[i]][color_trans[i][j]];
-        }
-    }
-}*/
-
-bool CanUP = 1;
 
 void upload()
 {
@@ -573,7 +559,6 @@ void (*formulaJ[20])(bool) = {j0, j1, j2, j3, j4, j5, j6, j7,
 
 bool input()
 {
-    //initialize();
     char c;
     for (short i = 0; i < 6; i++)
     {
@@ -582,11 +567,11 @@ bool input()
             c = getchar();
             if (c != '\n' && c != ' ')
             {
-                for (short k = 0; k < 6; k++)
+                for (short l = 0; l < 6; l++)
                 {
-                    if (color_name[k] == c)
+                    if (color_name[l] == c)
                     {
-                        color[sur_trans[i]][color_trans[i][j]] = k;
+                        color[sur_trans[i]][color_trans[i][j]] = l;
                         j++;
                     }
                 }
@@ -597,21 +582,18 @@ bool input()
     return 0;
 }
 
-bool output()
-{
+/*bool output() {
     FILE *fp;
     fp = stderr;
-    for (int i = 0; i < 6; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 9; j++) {
             putc(color_name[color[sur_trans[i]][color_trans[i][j]]], fp);
         }
         putc('\n', fp);
     }
     fflush(stdout);
     return 0;
-}
+}*/
 
 bool level_cmp(short x, short y)
 {
@@ -634,7 +616,7 @@ bool level_cmp(short x, short y)
     return x < y;
 }
 
-bool statejudgment_g0_g1()
+bool state_judgment_g0_g1()
 { //G0->G1
     for (short i = 0; i < 6; i++)
     {
@@ -647,7 +629,7 @@ bool statejudgment_g0_g1()
     return 0;
 }
 
-bool statejudgment_g1()
+bool state_judgment_g1()
 { //G1->G1.5
     for (short j = 1; j < 9; j += 2)
     {
@@ -658,7 +640,7 @@ bool statejudgment_g1()
     return 0;
 }
 
-bool statejudgment_g2()
+bool state_judgment_g2()
 { //G1.5->G2
     for (short j = 1; j < 9; j++)
     {
@@ -669,7 +651,7 @@ bool statejudgment_g2()
     return 0;
 }
 
-bool statejudgment_g3()
+bool state_judgment_g3()
 { //G2->G3
     for (short i = 0; i < 4; i++)
     {
@@ -678,16 +660,16 @@ bool statejudgment_g3()
             if (color[i][j] != color[i][0] && color[i][j] != color[i + 1 - 2 * (i & 1)][0])
                 return 1;
         }
-        for (short i = 0; i < 4; i++)
+        for (short ii = 0; ii < 4; ii++)
         {
-            if (!(color[i][4] == color[i][2] && color[i][6] == color[i][8]))
+            if (!(color[ii][4] == color[ii][2] && color[ii][6] == color[ii][8]))
                 return 1;
         }
     }
     return 0;
 }
 
-bool statejudgment()
+bool state_judgment()
 { //->G4
     for (short i = 0; i < 6; i++)
     {
@@ -708,7 +690,7 @@ bool heuristic_g0_g1(int step) //G0->G1
         for (short j = 0; j < 4; j++)
         {
             if (scnnct[i / 2][j & 1] ^ level_cmp(color[i][2 * j + 1], *ccnnct[i][j]))
-                if ((++cnt) * 0.05 > k - step) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
+                if ((++cnt) * 0.15 > k - step) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
                     return 0;
         }
     }
@@ -722,7 +704,7 @@ bool heuristic_g1(int step) //G1->G1.5
         for (int j = 1; j < 9; j += 2)
             if (color[i][j] != color[4][0] && color[i][j] != color[5][0])
             {
-                if ((++cnt) * 0.29 > k - step) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
+                if ((++cnt) * 0.15 > k - step) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
                     return 0;
             }
     return 1;
@@ -734,7 +716,7 @@ bool heuristic_g2(int step) //G1.5->G2
     for (int i = 4; i < 6; ++i)
         for (int j = 1; j < 9; j++)
             if (color[i][j] != color[4][0] && color[i][j] != color[5][0])
-                if ((++cnt) * 0.2 > k - step) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
+                if ((++cnt) * 0.05 > k - step) //当前步数(step)+估价函数值(cnt)>枚举的最大步数
                     return 0;
     return 1;
 }
@@ -769,13 +751,13 @@ bool heuristic(int step) // ->G4
     return 1;
 }
 
-short op[64];
+int op[64];
 
 void A_star(int step, int pre) //阶段(g0->g4)  估价函数(用heuristic)  公式(全18个) <=8步
 {
     if (step == k)
     {
-        if (!statejudgment())
+        if (!state_judgment())
             success = 1;
         return;
     }
@@ -813,7 +795,7 @@ void A_star_g0_g1(int step, int pre) //阶段(g0->g1)  估价函数(用heuristic
 {
     if (step == k)
     {
-        if (!statejudgment_g0_g1())
+        if (!state_judgment_g0_g1())
             success = 1;
         return;
     }
@@ -836,7 +818,6 @@ void A_star_g0_g1(int step, int pre) //阶段(g0->g1)  估价函数(用heuristic
         if (success)
         {
             upload();
-            CanUP = 0;
             for (int j = 0; j < 64; j++)
             {
                 if (op[j] == -1)
@@ -855,7 +836,7 @@ void A_star_g1(int step, int pre) //阶段(g1->g1.5)  估价函数(用heuristic_
 {
     if (step == k)
     {
-        if (!statejudgment_g1())
+        if (!state_judgment_g1())
             success = 1;
         return;
     }
@@ -880,7 +861,6 @@ void A_star_g1(int step, int pre) //阶段(g1->g1.5)  估价函数(用heuristic_
         if (success)
         {
             upload();
-            CanUP = 0;
             for (int j = 0; j < 64; j++)
             {
                 if (op[j] == -1)
@@ -898,7 +878,7 @@ void A_star_g1(int step, int pre) //阶段(g1->g1.5)  估价函数(用heuristic_
 void A_star_g2(int step, int pre) //阶段(g1.5->g2)  估价函数(用heuristic_g2)  公式(全18个除去F,Fi,B,Bi)
 {
     //output();
-    if (!statejudgment_g2())
+    if (!state_judgment_g2())
         success = 1;
     if (step == k || success)
     {
@@ -907,7 +887,6 @@ void A_star_g2(int step, int pre) //阶段(g1.5->g2)  估价函数(用heuristic_
     //达到当前限制的最大深度
     for (int i = 0; i < 16; ++i)
     {
-        //output();
         if (pre == i)
             continue; //加入了上述最优性剪枝
         formulaJ[i](0);
@@ -915,9 +894,7 @@ void A_star_g2(int step, int pre) //阶段(g1.5->g2)  估价函数(用heuristic_
             A_star_g2(step + 1, i); //A*估价合法再向下搜索
         if (success)
         {
-            //if(CanUP)
             upload();
-            CanUP = 0;
             for (int j = 0; j < 64; j++)
             {
                 if (op[j] == -1)
@@ -936,7 +913,7 @@ void A_star_g3(int step, int pre) //阶段(g2->g3)  估价函数(用heuristic_g3
 {
     if (step == k)
     {
-        if (!statejudgment_g3())
+        if (!state_judgment_g3())
             success = 1;
         return;
     }
@@ -945,7 +922,6 @@ void A_star_g3(int step, int pre) //阶段(g2->g3)  估价函数(用heuristic_g3
         return;
     for (int i = 0; i < 11; ++i)
     {
-        //output();
         int re = i < 4 ? i + 1 - 2 * (i & 1) : i;
         if (pre == re)
         {
@@ -956,9 +932,7 @@ void A_star_g3(int step, int pre) //阶段(g2->g3)  估价函数(用heuristic_g3
             A_star_g3(step + 1, i); //A*估价合法再向下搜索
         if (success)
         {
-            //if(CanUP)
             upload();
-            CanUP = 0;
             for (int j = 0; j < 64; j++)
             {
                 if (op[j] == -1)
@@ -977,7 +951,7 @@ void A_star_g4(int step, int pre) //阶段(g3->g4)  估价函数(用heuristic)  
 {
     if (step == k)
     {
-        if (!statejudgment())
+        if (!state_judgment())
             success = 1;
         return;
     }
@@ -986,7 +960,6 @@ void A_star_g4(int step, int pre) //阶段(g3->g4)  估价函数(用heuristic)  
         return;
     for (int i = 12; i < fm_n; ++i)
     {
-        //output();
         if (pre == i)
         {
             continue; //加入了上述最优性剪枝
@@ -1010,7 +983,7 @@ void A_star_g4(int step, int pre) //阶段(g3->g4)  估价函数(用heuristic)  
     }
 }
 
-int main(int argc, const char *argv[])
+int main()
 {
     if (input())
         return 0;
@@ -1023,23 +996,24 @@ int main(int argc, const char *argv[])
     {
         download();
         A_star(0, -1);
-        if (success) {
-            for (int i = 63; i >= 0; i--) {
-                if (op[i] != -1) formula[op[i]](1);
+        if (success)
+        {
+            for (int i = 63; i >= 0; i--)
+            {
+                if (op[i] != -1)
+                    formula[op[i]](1);
             }
-            fprintf(stderr, "%d\n", k);
             return 0;
         }
-        if (k == 8)
-            fprintf(stderr, "-1");
     }
-    if(success)
+    if (success)
         return 0;
-    for (int i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; i++)
+    {
         op[i] = -1;
     }
     k = 0;
-    if (statejudgment_g0_g1())
+    if (state_judgment_g0_g1())
         while (++k) //g0->g1枚举最大深度
         {
             download();
@@ -1050,19 +1024,15 @@ int main(int argc, const char *argv[])
                 for (int i = 63; i >= 0; i--)
                     if (op[i] != -1)
                         formula[op[i]](1);
-                fprintf(stderr, "%d\n", k);
                 break;
             }
-            if (k == 8)
-                fprintf(stderr, "-1");
         }
     for (int i = 0; i < 64; i++)
     {
         op[i] = -1;
     }
-    output();
     k = 0;
-    if (statejudgment_g1())
+    if (state_judgment_g1())
         while (++k) //g1->g1.5枚举最大深度
         {
             download();
@@ -1073,20 +1043,16 @@ int main(int argc, const char *argv[])
                 for (int i = 63; i >= 0; i--)
                     if (op[i] != -1)
                         formula[op[i]](1);
-                fprintf(stderr, "%d\n", k);
                 break;
             }
-            if (k == 8)
-                fprintf(stderr, "-1");
         }
     for (int i = 0; i < 64; i++)
     {
         op[i] = -1;
     }
-    output();
     k = 0;
     success = 0;
-    if (statejudgment_g2())
+    if (state_judgment_g2())
         while (++k) // g1.5->g2
         {
             download();
@@ -1097,20 +1063,16 @@ int main(int argc, const char *argv[])
                 for (int i = 63; i >= 0; i--)
                     if (op[i] != -1)
                         formulaJ[op[i]](1);
-                fprintf(stderr, "%d\n", k);
                 break;
             }
-            if (k == 8)
-                fprintf(stderr, "-1");
         }
     for (int i = 0; i < 64; i++)
     {
         op[i] = -1;
     }
     download();
-    output();
     k = 0;
-    if (statejudgment_g3())
+    if (state_judgment_g3())
         while (++k) //从g2出发枚举最大深度
         {
             download();
@@ -1121,20 +1083,16 @@ int main(int argc, const char *argv[])
                 for (int i = 63; i >= 0; i--)
                     if (op[i] != -1)
                         formulaC[op[i]](1);
-                fprintf(stderr, "%d\n", k);
                 break;
             }
-            if (k == 8)
-                fprintf(stderr, "-1");
         }
     for (int i = 0; i < 64; i++)
     {
         op[i] = -1;
     }
-    output();
     k = 0;
     success = 0;
-    if (statejudgment())
+    if (state_judgment())
         while (++k) // 从g3出发
         {
             download();
@@ -1144,12 +1102,8 @@ int main(int argc, const char *argv[])
                 for (int i = 63; i >= 0; i--)
                     if (op[i] != -1)
                         formula[op[i]](1);
-                fprintf(stderr, "%d\n", k);
                 break;
             }
-            if (k == 8)
-                fprintf(stderr, "-1");
         }
-    output();
     return 0;
 }
