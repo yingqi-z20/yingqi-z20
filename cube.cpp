@@ -55,6 +55,7 @@ short *sur_next[6][12] = {
      &color[2][4], &color[1][8], &color[1][7], &color[1][6], &color[3][4],
      &color[3][3], &color[3][2]},
 };
+
 void spin(short s, bool b)
 {
     short temp[3];
@@ -602,6 +603,7 @@ short *ccnnct[6][4] = {{&color[2][1], &color[4][1], &color[3][1], &color[5][1]},
 bool scnnct[3][2] = {{1, 1},
                      {0, 1},
                      {0, 0}};
+
 bool level_cmp(short x, short y)
 {
     for (short i = 0; i < 6; i++)
