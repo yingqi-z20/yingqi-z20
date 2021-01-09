@@ -1,3 +1,11 @@
+//
+//  main.cpp
+//  cube
+//
+//  Created by 张英奇 on 2020/9/20.
+//  Copyright © 2020 张英奇 & 张程皓. All rights reserved.
+//
+
 #include <cstdio>
 
 #define R() spin(1, 0)
@@ -47,16 +55,6 @@ short *sur_next[6][12] = {
      &color[2][4], &color[1][8], &color[1][7], &color[1][6], &color[3][4],
      &color[3][3], &color[3][2]},
 };
-short *ccnnct[6][4] = {{&color[2][1], &color[4][1], &color[3][1], &color[5][1]},
-                       {&color[2][5], &color[4][5], &color[3][5], &color[5][5]},
-                       {&color[0][1], &color[5][3], &color[1][1], &color[4][3]},
-                       {&color[0][5], &color[5][7], &color[1][5], &color[4][7]},
-                       {&color[0][3], &color[2][7], &color[1][3], &color[3][7]},
-                       {&color[0][7], &color[2][3], &color[1][7], &color[3][3]}};
-bool scnnct[3][2] = {{1, 1},
-                     {0, 1},
-                     {0, 0}};
-
 void spin(short s, bool b)
 {
     short temp[3];
@@ -595,6 +593,15 @@ bool input()
     return 0;
 }*/
 
+short *ccnnct[6][4] = {{&color[2][1], &color[4][1], &color[3][1], &color[5][1]},
+                       {&color[2][5], &color[4][5], &color[3][5], &color[5][5]},
+                       {&color[0][1], &color[5][3], &color[1][1], &color[4][3]},
+                       {&color[0][5], &color[5][7], &color[1][5], &color[4][7]},
+                       {&color[0][3], &color[2][7], &color[1][3], &color[3][7]},
+                       {&color[0][7], &color[2][3], &color[1][7], &color[3][3]}};
+bool scnnct[3][2] = {{1, 1},
+                     {0, 1},
+                     {0, 0}};
 bool level_cmp(short x, short y)
 {
     for (short i = 0; i < 6; i++)
